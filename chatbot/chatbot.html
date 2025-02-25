@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+    
+</head>
+<body>
+    <!-- Navigation Panel -->
+    <div class="nav-panel">
+        <div class="nav-header">
+            <button id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
+        <button id="clear-history-btn"><i class="fas fa-trash-alt"></i> Clear History</button>
+        <button id="home-btn"><i class="fas fa-home"></i> Home</button>
+        <script>
+            document.getElementById('home-btn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+        </script>
+        </div>
+        <div id="chat-history-list">
+            <!-- Chat history will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Chatbot Container -->
+    <div class="chatbot-cont">
+        <div class="chat-cont" id="chat-cont">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <div class="typing-cont">
+            <div class="textarea-container">
+                <select id="personality-select">
+                    <option value="select">Select Character</option>
+                    <option value="SpongeBob">SpongeBob</option>
+                    <option value="Patrick">Patrick</option>
+                    <option value="Squidward">Squidward</option>
+                    <option value="Mr. Krabs">Mr. Krabs</option>
+                    <option value="Plankton">Plankton</option>
+                    <option value="Sandy">Sandy</option>
+                </select>
+                <textarea id="chat-input" spellcheck="false" placeholder="Ask me anything..." required></textarea>
+                <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="mainmodule.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

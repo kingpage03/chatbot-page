@@ -1,0 +1,409 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body{
+
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background:url(imgs/place.jpg) no-repeat center center;
+    color: #f4ece4;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+  }
+
+
+
+button {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+p {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    margin-bottom: 15px;
+    max-width: 600px;
+    text-align: left;
+}
+/* Navigation Panel */
+.nav-panel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #528bf328;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #f4ece4;
+}
+#clear-history-btn {
+    margin-top: 5px;
+    width: 100%;
+    padding: 10px;
+    background-color: #44e6fc57;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#clear-history-btn:hover {
+    background-color: #44e6fc;
+    transform: scale(1.05);
+}
+
+#home-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #44e6fc57; /* Dark gray (closer to ChatGPT's theme) */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Softer corners */
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 5px;
+}
+
+#home-btn:hover {
+    background-color: #44e6fc;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Soft shadow effect */
+}
+
+/* Active click effect */
+#home-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* New Chat Button */
+#new-chat-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #44e6fc57;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#new-chat-btn:hover {
+    background-color: #44e6fc;
+    transform: scale(1.05);
+}
+
+/* Chat History List */
+#chat-history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* Chat History Highlight Effect */
+.nav-item {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    color: inherit;
+}
+
+/* Hover Effect */
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.09);
+}
+
+/* Active Chat Highlight */
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+}
+
+/* Chatbot Container */
+.chatbot-cont {
+    flex: 1;
+    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #11111100;
+}
+
+/* Chat Messages Container */
+.chat-cont {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background: #3e76df00;
+    background-size: cover;
+}
+
+/* Chat Message Styles */
+.chat-content {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* User Message */
+.chat-content.user {
+    justify-content: flex-end;
+}
+
+.chat-body-inner.right {
+    background: #0465836c;
+    color: #00043a;
+    text-align: right;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 70%;
+    word-wrap: break-word;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* AI Message */
+.chat-content.ai {
+    justify-content: flex-start;
+}
+
+.chat-body-inner.left {
+    background: #309ec06c;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 70%;
+    word-wrap: break-word;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    text-align: left;
+}
+
+/* AI Avatar */
+.ai-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease-in-out forwards;
+    transition: transform 0.3s ease;
+}
+
+/* Typing Input Container */
+.typing-cont {
+    display: flex;
+    padding: 15px;
+    background: #3e76df00;
+}
+
+.textarea-container {
+    display: flex;
+    flex-grow: 1;
+    background: #44e6fc57;
+    border-radius: 20px;
+    padding: 1px;
+    align-items: center;
+    transition: background 0.3s ease-in-out;
+}
+
+#chat-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    font-size: 14px;
+    color: #f4ece4;
+    resize: none;
+    outline: none;
+}
+
+/* Send Button */
+#send-btn {
+    margin-top: auto;
+    margin-bottom: auto;
+    background: transparent;
+    color: white;
+    border: none;
+    padding: 20px 15px;
+    border-radius: 35%;
+    cursor: pointer;
+    font-size:15px;;
+    transition: background 0.3s ease, transform 0.2s ease;
+    scale: 0.9;
+}
+
+#send-btn:hover {
+    background: transparent;;
+    transform: scale(1.7);
+}
+
+/* Smooth Transition Effects for Chat Bubbles */
+.chat-content.ai:hover .chat-body-inner.left,
+.chat-content.user:hover .chat-body-inner.right {
+    transform: scale(1.02);
+}
+
+/* Scrollbar Customization */
+.chat-cont::-webkit-scrollbar,
+#chat-history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-cont::-webkit-scrollbar-track,
+#chat-history-list::-webkit-scrollbar-track {
+    background: #3a322e;
+}
+
+.chat-cont::-webkit-scrollbar-thumb,
+#chat-history-list::-webkit-scrollbar-thumb {
+    background: #6f4e37;
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.chat-cont::-webkit-scrollbar-thumb:hover,
+#chat-history-list::-webkit-scrollbar-thumb:hover {
+    background: #5c3c2d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-panel {
+        width: 200px;
+    }
+
+    .chatbot-cont {
+        margin-left: 200px;
+    }
+
+    .chat-body-inner {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-panel {
+        display: none;
+    }
+
+    .chatbot-cont {
+        margin-left: 0;
+    }
+
+    .chat-body-inner {
+        max-width: 90%;
+    }
+}
+
+.quick-responses-container {
+    position: absolute;
+    bottom: 100px; 
+    left: 5px;    
+    right: 5px;   
+    display: flex;
+    gap: 10px;
+    overflow: hidden;
+    justify-content: center;
+}
+
+#personality-select {
+    background: #31bdbdb4;
+    color: #f4ece4;
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 10px;
+    outline: none;
+}
+
+#personality-select:hover {
+    background: #31bdbdb4;
+}
+
+.quick-responses-container {
+    position: absolute;
+    bottom: 660px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    z-index: 10;
+}
+
+.quick-response-card {
+    padding: 50px 10px;
+    background-color: #309ec06c;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3sease;
+}
+
+.quick-response-card:hover {
+    background-color: #309ec0;
+    transform: scale(1.09);
+    transition: 0.5s;
+}
+
