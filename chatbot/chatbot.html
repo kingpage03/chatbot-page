@@ -27,8 +27,8 @@
     <!-- Navigation Panel -->
     <div class="nav-panel">
         <div class="nav-header">
-            <button id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
-        <button id="clear-history-btn"><i class="fas fa-trash-alt"></i> Clear History</button>
+
+        <button id="clear-history-btn"><i class="fas fa-trash-alt"></i> Clear Chat</button>
         <button id="home-btn"><i class="fas fa-home"></i> Home</button>
         <script>
             document.getElementById('home-btn').addEventListener('click', function() {
@@ -36,9 +36,7 @@
             });
         </script>
         </div>
-        <div id="chat-history-list">
-            <!-- Chat history will be dynamically inserted here -->
-        </div>
+
     </div>
 
     <!-- Chatbot Container -->
@@ -50,7 +48,6 @@
         <div class="typing-cont">
             <div class="textarea-container">
                 <select id="personality-select">
-                    <option value="select">Select Character</option>
                     <option value="SpongeBob">SpongeBob</option>
                     <option value="Patrick">Patrick</option>
                     <option value="Squidward">Squidward</option>
