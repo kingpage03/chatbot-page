@@ -9,7 +9,7 @@ const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-cont");
 const chatHistoryList = document.querySelector("#chat-history-list");
-const newChatButton = document.querySelector("#new-chat-btn");
+
 const clearHistoryButton = document.querySelector("#clear-history-btn");
 const personalitySelect = document.getElementById("personality-select");
 const chatbotContainer = document.querySelector(".chatbot-cont");
@@ -38,15 +38,16 @@ if (selectedPersonality) {
 }
 
 personalitySelect.addEventListener("change", function () {
-    if (!localStorage.getItem(`personality-${currentSessionId}`)) {
-        selectedPersonality = this.value;
-        localStorage.setItem(`personality-${currentSessionId}`, selectedPersonality);
-        localStorage.setItem(`personalityLocked-${currentSessionId}`, "true");
-        personalitySelect.disabled = true; // Lock selection
+    selectedPersonality = this.value; // Update selected personality immediately
+    localStorage.setItem(`personality-${currentSessionId}`, selectedPersonality);
+    localStorage.setItem(`personalityLocked-${currentSessionId}`, "true");
+
+    // Update the avatar immediately when the personality changes
+    const aiAvatar = document.querySelector(".ai-avatar");
+    if (aiAvatar) {
+        aiAvatar.src = personalityAvatars[selectedPersonality] || "imgs/select.jpg";
     }
 });
-
-
 
 // Utility Functions
 function generateSessionId() {
@@ -66,25 +67,6 @@ function formatMessageText(text) {
         : formattedText;
 }
 
-// Update Chat History UI
-function updateChatHistoryList() {
-    chatHistoryList.innerHTML = "";
-    Object.keys(chatHistories).forEach((sessionId) => {
-        const lastMessage = chatHistories[sessionId].slice(-1)[0]?.message || "New Chat";
-        const chatTitle = lastMessage.length > 20 ? `${lastMessage.slice(0, 20)}...` : lastMessage;
-        const chatItem = document.createElement("div");
-        chatItem.classList.add("nav-item");
-        chatItem.textContent = chatTitle;
-        if (sessionId === currentSessionId) chatItem.classList.add("active");
-        chatItem.addEventListener("click", () => {
-            document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
-            chatItem.classList.add("active");
-            loadChatHistory(sessionId);
-        });
-        chatHistoryList.appendChild(chatItem);
-    });
-}
-
 // Create Chat Message Element
 function createMessageElement(message, sender) {
     const messageElement = document.createElement("div");
@@ -100,6 +82,7 @@ function createMessageElement(message, sender) {
         aiAvatar.src = personalityAvatars[selectedPersonality] || "imgs/select.jpg"; 
         aiAvatar.alt = "AI Avatar";
         aiAvatar.classList.add("ai-avatar");
+
         messageElement.appendChild(aiAvatar);
     }
 
@@ -114,17 +97,17 @@ function getChatResponse(userText) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     // Gather recent chat messages for context
-const conversationHistory = chatHistories[currentSessionId]
-.map(({ sender, message }) => `${sender === "user" ? "User" : "AI"}: ${message}`)
-.join("\n");
+    const conversationHistory = chatHistories[currentSessionId]
+        .map(({ sender, message }) => `${sender === "user" ? "User" : "AI"}: ${message}`)
+        .join("\n");
 
-// Send full context to AI
-model.generateContent(`${conversationHistory}\nUser: ${userText}`).then(result => result.response.text())
-
+    // Send full context to AI
+    model.generateContent(`${conversationHistory}\nUser: ${userText}`).then(result => result.response.text())
         .then(response => {
             const formattedResponse = formatMessageText(response);
             aiMessage.querySelector(".chat-body-inner").innerHTML = formattedResponse;
-            chatHistories[currentSessionId].push({ message: response, sender: "ai" });
+            chatHistories[currentSessionId].push({ message: response, sender: "ai", avatar: personalityAvatars[selectedPersonality] || "imgs/select.jpg" });
+
             saveChatHistory();
         })
         .catch(error => {
@@ -163,67 +146,18 @@ function handleAPI() {
     }
 }
 
-
-
 // Start New Chat Session
 function startNewChat() {
-    currentSessionId = generateSessionId();
-    chatHistories[currentSessionId] = [];
-    chatContainer.innerHTML = "";
-    saveChatHistory();
-    updateChatHistoryList();
-
-    // Unlock personality selection
-    localStorage.removeItem(`personality-${currentSessionId}`);
-    localStorage.removeItem(`personalityLocked-${currentSessionId}`);
-    personalitySelect.disabled = false;
-    personalitySelect.value = "select"; // Reset dropdown
-
-
-    // Clear and render quick responses only once
-    quickResponsesContainer.innerHTML = "";
-    renderQuickResponses();
-
-    if (!localStorage.getItem(`quickResponses-${currentSessionId}`)) {
-        renderQuickResponses();
-        localStorage.setItem(`quickResponses-${currentSessionId}`, "shown");
-    }
+    chatContainer.innerHTML = ""; // Clear chat container
+    chatHistories[currentSessionId] = []; // Reset chat history
+    saveChatHistory(); // Save the empty chat history
 }
-
-
-
-// Load Chat History for Selected Session
-function loadChatHistory(sessionId) {
-    currentSessionId = sessionId;
-    chatContainer.innerHTML = "";
-
-    chatHistories[currentSessionId].forEach(({ message, sender }) => {
-        const messageElement = createMessageElement(formatMessageText(message), sender);
-        chatContainer.appendChild(messageElement);
-    });
-
-    saveChatHistory();
-    quickResponsesContainer.innerHTML = "";
-
-    if (!localStorage.getItem(`quickResponses-${currentSessionId}`)) {
-        renderQuickResponses();
-        localStorage.setItem(`quickResponses-${currentSessionId}`, "shown");
-    }
-
-    // Restore personality selection for this session
-    const savedPersonality = localStorage.getItem(`personality-${currentSessionId}`);
-    if (savedPersonality) {
-        selectedPersonality = savedPersonality;
-        personalitySelect.value = savedPersonality;
-        personalitySelect.disabled = true; // Lock the dropdown
-    }
-}
-
 
 // Clear All Chat Histories
 function clearAllChatHistories() {
-    chatHistories = {};
-    startNewChat();
+    chatContainer.innerHTML = ""; // Clear chat container
+    chatHistories[currentSessionId] = []; // Reset chat history
+    saveChatHistory(); // Save the empty chat history
 }
 
 // Event Listeners
@@ -231,12 +165,13 @@ sendButton.addEventListener("click", handleAPI);
 chatInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") handleAPI();
 });
-newChatButton.addEventListener("click", startNewChat);
+
 clearHistoryButton.addEventListener("click", clearAllChatHistories);
 
 // Quick Responses Section
 const quickResponsesContainer = document.createElement("div");
 quickResponsesContainer.classList.add("quick-responses-container");
+quickResponsesContainer.style.display = "none"; // Initially hide quick responses
 
 if (chatbotContainer) {
     chatbotContainer.appendChild(quickResponsesContainer);
@@ -244,40 +179,59 @@ if (chatbotContainer) {
     console.error("Error: .chatbot-cont not found!");
 }
 
-const quickResponses = [
-    "Tell me a joke!", "What's the weather today?", "Give me a fun fact!", 
-    "How do I cook pasta?", "Tell me about AI.", "What's your favorite movie?", 
-    "Can you sing a song?", "Give me a riddle!"
-];
-
-function getRandomResponses() {
-    return quickResponses.sort(() => Math.random() - 0.5).slice(0, 4);
+async function getAIQuickResponses() {
+    try {
+        const prompt = "Generate 4 short phrases to start a conversation in the settings of SpongeBOb Squarepants Show, DOnt include numbers and any special characters.";
+        const response = await model.generateContent(prompt).then(result => result.response.text());
+        return response.split('\n').filter(line => line.trim() !== '').slice(0, 4);
+    } catch (error) {
+        console.error("Error generating quick responses:", error);
+        return [
+            "Tell me something interesting!",
+            "What's on your mind today?",
+            "Can you share a fun fact?",
+            "What would you like to talk about?"
+        ];
+    }
 }
 
-function renderQuickResponses() {
+
+async function renderQuickResponses() {
     quickResponsesContainer.innerHTML = "";
     quickResponsesContainer.style.display = "flex";
 
-    getRandomResponses().forEach(response => {
+    const isCharacterSelected = selectedPersonality !== "";
+    
+    const responses = await getAIQuickResponses();
+    responses.forEach(response => {
+
         const responseCard = document.createElement("div");
         responseCard.classList.add("quick-response-card");
         responseCard.textContent = response;
 
-        responseCard.addEventListener("click", () => {
-            chatInput.value = response;
-            handleAPI();
-            setTimeout(() => quickResponsesContainer.style.display = "none", 500);
-        });
+        if (isCharacterSelected) {
+            responseCard.addEventListener("click", () => {
+                chatInput.value = response;
+                handleAPI();
+                setTimeout(() => quickResponsesContainer.style.display = "none", 500);
+            });
+        } else {
+            responseCard.style.cursor = "not-allowed"; // Indicate unclickable
+            responseCard.classList.add("unclickable"); // Optional: Add a class for styling
+        }
 
         quickResponsesContainer.appendChild(responseCard);
     });
 }
 
-
 // Initialize Chat on Load
 window.addEventListener("load", () => {
+    // Show character selection prompt
+    alert("Please select a character to start chatting!");
+    
     // Clear localStorage to reset chat history on refresh
     localStorage.clear();
+
 
     // Reset chat history and session
     chatHistories = {};
@@ -286,14 +240,19 @@ window.addEventListener("load", () => {
     
     chatContainer.innerHTML = ""; // Clear chat UI
     saveChatHistory();
-    updateChatHistoryList();
 
     // Reset personality selection
     selectedPersonality = "";
     personalitySelect.disabled = false;
-    personalitySelect.value = "select"; 
+    personalitySelect.value = ""; 
 
-    renderQuickResponses(); // Ensure quick responses are available
+    // Show quick responses if a personality is selected
+    personalitySelect.addEventListener("change", function () {
+        if (this.value !== "") {
+            renderQuickResponses();
+            quickResponsesContainer.style.display = "flex"; // Show quick responses
+        } else {
+            quickResponsesContainer.style.display = "none"; // Hide quick responses
+        }
+    });
 });
-
-
